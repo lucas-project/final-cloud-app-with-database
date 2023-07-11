@@ -50,6 +50,43 @@
                     </div>
                 {% endfor %}
             </div>
+            <!-- Exam section (hidden by default) -->
+                <div id="exam" class="collapse">
+                    <!-- Check if user is authenticated -->
+                    {% if user.is_authenticated %}
+                        <!-- Course exam -->
+                        <h3>Exam</h3>
+                        <form id="questionform" action="{% url 'onlinecourse:submit_exam' course.id %}" method="post">
+                            {% csrf_token %}
+                            <!-- Iterate over each question -->
+                            {% for question in course.question_set.all %}
+                                <div class="card mt-1">
+                                    <div class="card-header">
+                                        <h5>{{ question.text }}</h5>
+                                    </div>
+                                    <div class="form-group">
+                                        <!-- Iterate over each choice in the question -->
+                                        {% for choice in question.choice_set.all %}
+                                            <div class="form-check">
+                                                <label class="form-check-label">
+                                                    <input type="checkbox" name="choice_{{ choice.id }}" 
+                                                        class="form-check-input" id="{{ choice.id }}" 
+                                                        value="{{ choice.id }}">{{ choice.text }}
+                                                </label>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <input class="btn btn-success btn-block" type="submit" value="Submit">
+                        </form>
+                    {% else %}
+                        <p>Please log in to see the exam questions.</p>
+                    {% endif %}
+                </div>
+                <!-- Link to toggle exam visibility -->
+                <a class="btn btn-primary" data-toggle="collapse" href="#exam">Show/Hide Exam</a>
+
             <!-- Task: show questions and choices -->
             <!-- <HINT> Use Bootstrap Collapse to hide exam first, more details could be found here
             https://www.w3schools.com/bootstrap4/bootstrap_collapse.asp-->
